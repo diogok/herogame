@@ -13,10 +13,11 @@ var HeroGame = (function(){
             entities: [ ]
         };
 
-        HeroGame.afterDrawChar = function(canvas,char,game) {
-            var w = (HeroGame.sprite.size * HeroGame.scale) * (((char.life * 100) / char.maxLife)) / 100;
+        HeroGame.afterDrawChar = function(canvas,achar,game) {
+            var l = (achar.life * 100) / achar.maxLife;
+            var w = (HeroGame.sprite.size * HeroGame.scale) * (l/100);
             canvas.beginPath();
-            canvas.rect(char.x * HeroGame.game.scale,(char.y - 2) * HeroGame.game.scale,w,5);
+            canvas.rect(achar.x * HeroGame.game.scale,(achar.y - 2) * HeroGame.game.scale,w,5);
             canvas.fillStyle = 'green';
             canvas.fill();
             canvas.strokeStyle = 'black';
@@ -35,6 +36,8 @@ var HeroGame = (function(){
                 col: 0
             },
             life: 10,
+            attack: 5,
+            defense: 5,
             maxLife: 10,
             afterDraw: HeroGame.afterDrawChar,
             update: function(events,hero,game) {
@@ -61,6 +64,10 @@ var HeroGame = (function(){
             }
         };
 
+        HeroGame.dice = function() {
+            return Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        };
+
         HeroGame.entities.push(hero);
 
         HeroGame.gameOver = function() {
@@ -68,10 +75,22 @@ var HeroGame = (function(){
         };
 
         HeroGame.attack = function(p1,p2) {
+            var hit = p1.attack + HeroGame.dice() - p2.defense;
+            if(hit <= 0) hit = 0;
+            if(p1._last_attack) {
+                if(p1._last_attack <= ((new Date().getTime()/1000) - 1)) {
+                    p2.life -= hit;
+                    p1._last_attack = (new Date().getTime())/1000;
+                } 
+            } else {
+                p1._last_attack = (new Date().getTime())/1000;
+            }
         };
 
         HeroGame.monsterUpdate = function(events,monster,game) {
-            if(HeroGame.game.near(hero,monster,HeroGame.sprite.size)) {
+            if(monster.life <= 0) {
+                game.removeEntity(monster);
+            }else if(HeroGame.game.near(hero,monster,HeroGame.sprite.size)) {
                 HeroGame.attack(monster,hero);
             } else {
                 monster.moveTo = {};
@@ -94,7 +113,7 @@ var HeroGame = (function(){
             chest.sprite = chest.opened;
             var item = chest.item;
             item.autoDraw = true;
-            item.x = ( HeroGame.width / 2 ) - HeroGame.sprite.size ;
+            item.x = (HeroGame.width / 2) - HeroGame.sprite.size ;
             item.y = HeroGame.sprite.size - (hero.items.length * HeroGame.sprite.size);
             hero.items.push(item);
             HeroGame.game.addEntity(item);
@@ -114,15 +133,14 @@ var HeroGame = (function(){
             for(var i in map.entities) {
                 if(map.entities[i].type == 'monster') {
                     map.entities[i].update = HeroGame.monsterUpdate;
-                    map.entities[i].afterDrawChar = HeroGame.afterDrawChar;
+                    map.entities[i].afterDraw = HeroGame.afterDrawChar;
                 }
             }
         };
 
         HeroGame.run = function(game) {
             HeroGame.game = game;
-            HeroGame.map = maps.first;
-            game.loadMap(maps.first);
+            HeroGame.switchMap(["gomonster",maps.gomonster.start[0],maps.gomonster.start[1]]);
         };
 
         return HeroGame;
