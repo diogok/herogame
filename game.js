@@ -106,6 +106,7 @@ Game = (function(){
                     delete game.entities[i];
                 }
             }
+            game.entities = game.entities.filter(function(e) { return typeof e != 'undefined'}) ;
         };
 
         game.loadSprite = function(file,size) {
@@ -126,7 +127,7 @@ Game = (function(){
                 return;
             }
             game.drawing = true;
-            game.canvas.clearRect(0,0,game.canvas.wight,game.canvas.height);
+            game.canvas.clearRect(0,0,game.canvas.width,game.canvas.height);
             var entities = game.entities.slice();
             for(var i=0;i<entities.length;i++) {
                 if(entities[i].beforeDraw) {
