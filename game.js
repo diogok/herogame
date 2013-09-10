@@ -14,7 +14,8 @@ Game = (function(){
             ready: false,
             scale: 1,
             config: null,
-            map: null
+            map: null,
+            msgs: 0
         };
 
         game.near = function(a,b,t) {
@@ -144,6 +145,36 @@ Game = (function(){
             game.drawRequest = requestAnimationFrame(function(){
                 game.draw()
             });
+        };
+
+        game.message = function(msg) {
+            var ent = {
+                name:'-x-msg-'+new Date().getTime(),
+                msg: msg,
+                y: game.canvas.height - (game.spriteSheet.size * (game.msgs + 1)) - (game.msgs * 6) - 6,
+                x: game.spriteSheet.size,
+                draw: function(canvas,ent,game) {
+                    var w = canvas.width - (game.spriteSheet.size * 2)+ 4 ;
+                    var h = game.spriteSheet.size  + 4;
+                    var y = ent.y;
+                    var x = ent.x;
+                    canvas.beginPath();
+                    canvas.rect(x,y,w,h);
+                    canvas.fillStyle = 'rgba(0,0,0,0.8)';
+                    canvas.fill();
+                    canvas.strokeStyle = 'black';
+                    canvas.stroke();
+                    canvas.fillStyle = "green";
+                    canvas.font = "bold "+ game.spriteSheet.size +"px sans-serif";
+                    canvas.fillText(ent.msg, x + 4, y + game.spriteSheet.size);
+                }
+            };
+            game.addEntity(ent);
+            game.msgs++;
+            setTimeout(function() {
+                game.removeEntity(ent);
+                game.msgs--;
+            },5000);
         };
 
         game.move = function(entity) {

@@ -81,6 +81,7 @@ var HeroGame = (function(){
                 if(p1._last_attack <= ((new Date().getTime()/1000) - 1)) {
                     p2.life -= hit;
                     p1._last_attack = (new Date().getTime())/1000;
+                    HeroGame.game.message(p1.name+" delt "+hit+" damage to "+p2.name+".");
                 } 
             } else {
                 p1._last_attack = (new Date().getTime())/1000;
@@ -140,7 +141,13 @@ var HeroGame = (function(){
 
         HeroGame.run = function(game) {
             HeroGame.game = game;
-            HeroGame.switchMap(["gomonster",maps.gomonster.start[0],maps.gomonster.start[1]]);
+            HeroGame.switchMap(["first",maps.first.start[0],maps.first.start[1]]);
+            setTimeout(function(){
+                game.message("Welcome to your quest! Get out of the dungeon, if you can...");
+            },1000);
+            setTimeout(function(){
+                game.message("Click to move and interact with objects, and try not to die. Good luck!");
+            },7000);
         };
 
         return HeroGame;
