@@ -13,6 +13,16 @@ var HeroGame = (function(){
             entities: [ ]
         };
 
+        HeroGame.afterDrawChar = function(canvas,char,game) {
+            var w = (HeroGame.sprite.size * HeroGame.scale) * (((char.life * 100) / char.maxLife)) / 100;
+            canvas.beginPath();
+            canvas.rect(char.x * HeroGame.game.scale,(char.y - 2) * HeroGame.game.scale,w,5);
+            canvas.fillStyle = 'green';
+            canvas.fill();
+            canvas.strokeStyle = 'black';
+            canvas.stroke();
+        };
+
         var hero =  {
             name:'hero',
             type:"hero",
@@ -24,7 +34,13 @@ var HeroGame = (function(){
                 row: 4,
                 col: 0
             },
+            life: 10,
+            maxLife: 10,
+            afterDraw: HeroGame.afterDrawChar,
             update: function(events,hero,game) {
+                if(hero.life <= 0) {
+                    HeroGame.gameOver();
+                }
                 if(events.click && events.click.tile) {
                     if(events.click.tile.type == 'floor') {
                         hero.moveTo = {x: events.click.x * HeroGame.sprite.size, y: events.click.y * HeroGame.sprite.size};
@@ -46,6 +62,10 @@ var HeroGame = (function(){
         };
 
         HeroGame.entities.push(hero);
+
+        HeroGame.gameOver = function() {
+            HeroGame.game.stop();
+        };
 
         HeroGame.attack = function(p1,p2) {
         };
@@ -94,6 +114,7 @@ var HeroGame = (function(){
             for(var i in map.entities) {
                 if(map.entities[i].type == 'monster') {
                     map.entities[i].update = HeroGame.monsterUpdate;
+                    map.entities[i].afterDrawChar = HeroGame.afterDrawChar;
                 }
             }
         };

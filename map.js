@@ -152,6 +152,8 @@ maps.gomonster= {
             "y":10 * 16,
             "type":"monster",
             "autoDraw": true,
+            "life": 4,
+            "maxLife": 4,
             "sprite": {
                 "row": 3,
                 "col":5

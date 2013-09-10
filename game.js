@@ -129,7 +129,15 @@ Game = (function(){
             game.canvas.clearRect(0,0,game.canvas.wight,game.canvas.height);
             var entities = game.entities.slice();
             for(var i=0;i<entities.length;i++) {
-                entities[i].draw(game.canvas,entities[i],game);
+                if(entities[i].beforeDraw) {
+                    entities[i].beforeDraw(game.canvas,entities[i],game);
+                }
+                if(entities[i].draw) {
+                    entities[i].draw(game.canvas,entities[i],game);
+                }
+                if(entities[i].afterDraw) {
+                    entities[i].afterDraw(game.canvas,entities[i],game);
+                }
             }
             game.drawing = false;
             game.drawRequest = requestAnimationFrame(function(){
@@ -181,8 +189,14 @@ Game = (function(){
                 if(entities[i].moveTo) {
                     game.move(entities[i]);
                 }
+                if(entities[i].beforeUpdate) {
+                    entities[i].beforeUpdate(game.events,entities[i],game);
+                }
                 if(entities[i].update){
                     entities[i].update(game.events,entities[i],game);
+                }
+                if(entities[i].afterUpdate) {
+                    entities[i].afterUpdate(game.events,entities[i],game);
                 }
             }
             game.events = {};
@@ -193,7 +207,7 @@ Game = (function(){
             if(!game.active) return;
             game.active = false;
             if(game.updateInterval) {
-                cancelInterval(game.updateInterval);
+                clearInterval(game.updateInterval);
             }
             if(game.drawRequest) {
                 cancelAnimationFrame(game.drawRequest);
