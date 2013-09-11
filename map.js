@@ -75,18 +75,18 @@ maps.gochest = {
             "open": false,
             "type":"chest",
             "sprite": {
-                "row": 2,
+                "row": 4,
                 "col": 4
             },
             "opened": {
-                "row": 2,
+                "row": 4,
                 "col": 5
             },
             "item": {
                 "name":"first-key",
                 "sprite": {
-                    "row": 3,
-                    "col": 4
+                    "row": 4,
+                    "col": 0
                 }
             }
         },
@@ -159,7 +159,7 @@ maps.gomonster= {
             "maxLife": 4,
             "sprite": {
                 "row": 3,
-                "col":5
+                "col": 0
             }
         }
     ],

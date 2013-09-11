@@ -32,7 +32,7 @@ var HeroGame = (function(){
             autoDraw: true,
             items: [],
             sprite: {
-                row: 4,
+                row: 2,
                 col: 0
             },
             life: 10,
