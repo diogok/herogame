@@ -34,43 +34,36 @@ Game = (function(){
             game.map = map;
             var bkp = game.entities.slice();
             game.entities = [];
-            for(var row=0; row<map.tiles.length;row++) {
-                for(var col=0; col<map.tiles[row].length;col++) {
-                    var tile = map.tiles[row][col];
+            game.msgs= 0;
+            for(var y=0; y<map.tiles.length;y++) {
+                for(var x=0; x<map.tiles[y].length;x++) {
+                    var tile = map.tiles[y][x];
                     var tileCfg = {
-                        name: "-map-r:"+row+"-c:"+col,
-                        x: col * map.sprite.size,
-                        y: row * map.sprite.size,
+                        name: "-map-r:"+y+"-c:"+x,
+                        x: x * game.spriteSheet.size,
+                        y: y * game.spriteSheet.size,
                         autoDraw: true,
                         sprite: {
-                            row: tile[0],
-                            col: tile[1]
+                            y: tile[0],
+                            x: tile[1]
                         }
                     };
                     var tileCfgExtra = null, tileCfgExtraExtra = null;
                     try {
                         tileCfgExtra = game.map.sprite.config[tile[0]][tile[1]];
                         if(typeof tileCfgExtra == 'string') tileCfgExtra = {type:tileCfgExtra};
-                        try {
-                            tileCfgExtraExtra = game.map.config[row][col];
-                        }catch(e){}
                     } catch(e) {}
                     if(tileCfgExtra != null) {
                         for(var k in tileCfgExtra) {
                             tileCfg[k] = tileCfgExtra[k];
                         }
                     }
-                    if(tileCfgExtraExtra != null) {
-                        for(var k in tileCfgExtraExtra) {
-                            tileCfg[k] = tileCfgExtraExtra[k];
-                        }
-                    }
                     game.addEntity(tileCfg);
                 }
             }
             if(map.entities) {
-                for(var row=0; row<map.entities.length;row++) {
-                    game.addEntity(map.entities[row]);
+                for(var y=0; y<map.entities.length;y++) {
+                    game.addEntity(map.entities[y]);
                 }
             }
             for(var i=0;i<bkp.length;i++) {
@@ -86,8 +79,8 @@ Game = (function(){
                     var sprite = game.spriteSheet;
                     canvas.drawImage(
                         sprite,
-                        entity.sprite.col * sprite.size,
-                        entity.sprite.row * sprite.size,
+                        entity.sprite.x * sprite.size,
+                        entity.sprite.y * sprite.size,
                         sprite.size,
                         sprite.size,
                         entity.x * game.scale,
@@ -108,6 +101,15 @@ Game = (function(){
                 }
             }
             game.entities = game.entities.filter(function(e) { return typeof e != 'undefined'}) ;
+        };
+
+        game.getEntitiy = function(name) {
+            var max = game.entities.length;
+            for(var i =0;i<max;i++) {
+                if(game.entities[i].name == entity.name) {
+                    return game.entities[i];
+                }
+            }
         };
 
         game.loadSprite = function(file,size) {
@@ -147,7 +149,8 @@ Game = (function(){
             });
         };
 
-        game.message = function(msg) {
+        game.message = function(msg,timeout) {
+            var time = timeout || 5000;
             var ent = {
                 name:'-x-msg-'+new Date().getTime(),
                 msg: msg,
@@ -174,7 +177,7 @@ Game = (function(){
             setTimeout(function() {
                 game.removeEntity(ent);
                 game.msgs--;
-            },5000);
+            },time);
         };
 
         game.move = function(entity) {
