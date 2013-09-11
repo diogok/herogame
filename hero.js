@@ -17,7 +17,7 @@ var HeroGame = (function(){
             var l = (theChar.life * 100) / theChar.maxLife;
             var w = (HeroGame.sprite.size * HeroGame.scale) * (l/100);
             canvas.beginPath();
-            canvas.rect(theChar.x * HeroGame.game.scale,(theChar.y - 2) * HeroGame.game.scale,w,5);
+            canvas.rect(theChar.x * HeroGame.game.scale + HeroGame.game.diffX,(theChar.y - 2) * HeroGame.game.scale + HeroGame.game.diffY,w,5);
             canvas.fillStyle = 'green';
             canvas.fill();
             canvas.strokeStyle = 'black';

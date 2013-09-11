@@ -15,7 +15,9 @@ Game = (function(){
             scale: 1,
             config: null,
             map: null,
-            msgs: 0
+            msgs: 0,
+            diffX: 0,
+            diffY: 0
         };
 
         game.near = function(a,b,t) {
@@ -35,8 +37,9 @@ Game = (function(){
             var bkp = game.entities.slice();
             game.entities = [];
             game.msgs= 0;
-            for(var y=0; y<map.tiles.length;y++) {
-                for(var x=0; x<map.tiles[y].length;x++) {
+            var y,x;
+            for(y=0; y<map.tiles.length;y++) {
+                for(x=0; x<map.tiles[y].length;x++) {
                     var tile = map.tiles[y][x];
                     var tileCfg = {
                         name: "-map-r:"+y+"-c:"+x,
@@ -61,6 +64,8 @@ Game = (function(){
                     game.addEntity(tileCfg);
                 }
             }
+            game.diffY = ( game.canvas.height / 2 ) - (y * game.spriteSheet.size)
+            game.diffX = ( game.canvas.width  / 2 ) - (x * game.spriteSheet.size)
             if(map.entities) {
                 for(var y=0; y<map.entities.length;y++) {
                     game.addEntity(map.entities[y]);
@@ -83,8 +88,8 @@ Game = (function(){
                         entity.sprite.y * sprite.size,
                         sprite.size,
                         sprite.size,
-                        entity.x * game.scale,
-                        entity.y * game.scale,
+                        ( entity.x  * game.scale ) + game.diffX,
+                        ( entity.y  * game.scale ) + game.diffY,
                         sprite.size * game.scale,
                         sprite.size * game.scale
                     );
@@ -251,8 +256,8 @@ Game = (function(){
 
         game.bindEvents = function() {
             game.canvasEl.addEventListener('click',function(evt) {
-                var y = Math.floor(evt.layerY / ( game.spriteSheet.size * game.scale ));
-                var x = Math.floor(evt.layerX / ( game.spriteSheet.size * game.scale ));
+                var y = Math.floor(( evt.layerY - game.diffY) / ( game.spriteSheet.size * game.scale )) ;
+                var x = Math.floor(( evt.layerX - game.diffX) / ( game.spriteSheet.size * game.scale )) ;
                 try {
                     var entities = game.entities.slice();
                     var tileCfg = null;
