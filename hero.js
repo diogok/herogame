@@ -97,6 +97,31 @@ var HeroGame = (function(){
                     p2.life -= hit;
                     p1._last_attack = (new Date().getTime())/1000;
                     HeroGame.game.message(p1.name+" delt "+hit+" damage to "+p2.name+".");
+                    var e = {
+                        "name":'-hit_'+new Date().getTime(),
+                        "type":'fx',
+                        "hit":hit,
+                        "p2":p2,
+                        "p1":p1,
+                        "draw": function(canvas,hit,game){
+                            var s  =  HeroGame.game.spriteSheet.size * HeroGame.game.scale;
+                            var x0 = ( hit.p2.x * HeroGame.game.scale ) + HeroGame.game.diffX;
+                            var y0 = ( hit.p2.y * HeroGame.game.scale ) + HeroGame.game.diffY;
+                            if(hit.hit>0) canvas.strokeStyle = "red";
+                            else canvas.strokeStyle = 'gray';
+                            canvas.beginPath();
+                            canvas.moveTo(x0 + 4,y0 + 4);
+                            canvas.lineTo(x0 + s-4,y0+s-4);
+                            canvas.moveTo(x0 + s -4,y0+4);
+                            canvas.lineTo(x0+4,y0+s-4);
+                            canvas.lineWidth = 1 * HeroGame.game.scale;
+                            canvas.stroke();
+                        }
+                    };
+                    HeroGame.game.addEntity(e);
+                    setTimeout(function(){
+                        HeroGame.game.removeEntity(e);
+                    },500);
                 } 
             } else {
                 p1._last_attack = (new Date().getTime())/1000;
