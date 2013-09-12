@@ -6,7 +6,7 @@ var HeroGame = (function(){
             height: 640,
             scale: 2,
             sprite: {
-                file:"sprites-16x16.png",
+                file:"assets/sprites-16x16.png",
                 size: 16 
             },
             quest: null,
@@ -43,6 +43,7 @@ var HeroGame = (function(){
                 if(hero.life <= 0) {
                     HeroGame.gameOver();
                 }
+                if(hero.life > hero.maxLife) hero.life = hero.maxLife;
                 if(events.click && events.click.tile) {
                     if(events.click.tile.type == 'floor') {
                         hero.moveTo = {x: events.click.x * HeroGame.sprite.size, y: events.click.y * HeroGame.sprite.size};
@@ -68,6 +69,20 @@ var HeroGame = (function(){
                         if(!events.click.tile.open && HeroGame.game.near(hero, {x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
                             HeroGame.openChest(events.click.tile);
                         }
+                   } else if(events.click.tile.type == 'potion') {
+                       var deleted = false;
+                       for(var i in hero.items) {
+                           if(hero.items[i].name == events.click.tile.name) {
+                               delete hero.items[i];
+                               deleted = true;
+                           } else  if(deleted) {
+                               hero.items[i].y -= HeroGame.sprite.size;
+                           }
+                       }
+                       hero.items = hero.items.filter(function(i) { return typeof i != 'undefined';});
+                       hero.life += 5;
+                       HeroGame.game.message("You recovered 5 life points.");
+                       HeroGame.game.removeEntity(events.click.tile);
                    } else if(events.click.tile.type == "monster") {
                        if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
                            HeroGame.attack(hero,events.click.tile);
@@ -75,6 +90,16 @@ var HeroGame = (function(){
                    } else if(events.click.tile.type == "message") {
                        if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
                            HeroGame.game.message(events.click.tile.message);
+                       }
+                   } else if(events.click.tile.type == 'trap') {
+                       if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
+                           hero.life -= 1;
+                           HeroGame.game.message("Ouch! Hero took damage.");
+                       }
+                   } else if(events.click.tile.type == 'fake-floor') {
+                       if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
+                           hero.x = events.click.tile.x;
+                           hero.y = events.click.tile.y;
                        }
                    } else if(events.click.tile.type == 'save') {
                        if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
@@ -111,8 +136,13 @@ var HeroGame = (function(){
         };
 
         HeroGame.gameOver = function() {
+            setTimeout(function(){
+                HeroGame.game.stop();
+            },1000);
+            setTimeout(function(){
+                HeroGame.game.run(HeroGame);
+            },3000);
             HeroGame.game.message("You lost, pal!");
-            setTimeout(HeroGame.intro,2000);
         };
 
         HeroGame.attack = function(p1,p2) {
@@ -239,9 +269,11 @@ var HeroGame = (function(){
 
         HeroGame.intro = function() {
             HeroGame.game.reset();
+            hero.life = hero.maxLife;
+            hero.items = [];
 
             HeroGame.addButton('New Game',1,function(){
-                HeroGame.quest = quest;
+                HeroGame.quest = JSON.parse(JSON.stringify( quest ) );
                 HeroGame.switchMap(HeroGame.quest.start);
                 var intro = HeroGame.quest.intro.reverse();
                 for(var i in intro) {
@@ -258,6 +290,7 @@ var HeroGame = (function(){
                     var c = 0;
                     for(var i in save.hero.items) {
                         var item = save.hero.items[i];
+                        if(!item) continue;
                         item.autoDraw = true;
                         item.x = HeroGame.sprite.size * -1;
                         item.y = HeroGame.sprite.size * (c + 1);

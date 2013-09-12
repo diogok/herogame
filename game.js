@@ -30,6 +30,7 @@ Game = (function(){
 
         game.reset = function() {
             game.entities = [];
+            game.msgs = 0;
             game.map = null;
         };
 
@@ -171,7 +172,10 @@ Game = (function(){
         };
 
         game.message = function(msg,timeout) {
-            var time = timeout || 5000;
+            if(game.msgs >= 5) {
+                return;
+            }
+            var time = timeout || 3000;
             var ent = {
                 name:'-x-msg-'+new Date().getTime(),
                 type: "a-message",
@@ -182,6 +186,9 @@ Game = (function(){
                     var w = canvas.width - (game.spriteSheet.size * 2)+ 4 ;
                     var h = game.spriteSheet.size  + 4;
                     var y = ent.y;
+                    if(y > game.height ) {
+                        y = game.height - 16;
+                    }
                     var x = ent.x;
                     canvas.beginPath();
                     canvas.rect(x,y,w,h);
@@ -236,6 +243,10 @@ Game = (function(){
 
             var graph = new Graph(map);
             var path = graph.findShortestPath(eY+'x'+eX,tY+'x'+tX);
+            if(!path) {
+                delete entity.moveTo;
+                return;
+            }
             if(entity.x == entity.moveTo.x && entity.y == entity.moveTo.y) {
                 delete entity.moveTo;
                 return;
