@@ -124,8 +124,9 @@ var HeroGame = (function(){
             chest.sprite = chest.opened;
             var item = chest.item;
             item.autoDraw = true;
-            item.x = (HeroGame.width / 2) - HeroGame.sprite.size ;
-            item.y = HeroGame.sprite.size - (hero.items.length * HeroGame.sprite.size);
+            item.x = HeroGame.sprite.size * -1;
+            item.y = HeroGame.sprite.size;
+            console.log(item.x);
             hero.items.push(item);
             HeroGame.game.addEntity(item);
         };
