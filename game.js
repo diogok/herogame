@@ -17,7 +17,8 @@ Game = (function(){
             map: null,
             msgs: 0,
             diffX: 0,
-            diffY: 0
+            diffY: 0,
+            graph: {}
         };
 
         game.near = function(a,b,t) {
@@ -77,6 +78,21 @@ Game = (function(){
                 }
             }
         };
+
+        game.getEntityAt = function(y,x) {
+            var r = null;
+            var yyy = Math.floor(y / game.spriteSheet.size);
+            var xxx = Math.floor(x / game.spriteSheet.size);
+
+            for(var i in game.entities) {
+                var yy = Math.floor(game.entities[i].y / game.spriteSheet.size) ;
+                var xx = Math.floor(game.entities[i].x / game.spriteSheet.size) ;
+                if(xx == xxx && yy == yyy) {
+                    r = game.entities[i];
+                }
+            }
+            return r;
+        }
 
         game.addEntity = function(entity) {
             if(entity.autoDraw) {
@@ -158,6 +174,7 @@ Game = (function(){
             var time = timeout || 5000;
             var ent = {
                 name:'-x-msg-'+new Date().getTime(),
+                type: "a-message",
                 msg: msg,
                 y: game.canvas.height - (game.spriteSheet.size * (game.msgs + 1)) - (game.msgs * 6) - 6,
                 x: game.spriteSheet.size,
@@ -185,46 +202,118 @@ Game = (function(){
             },time);
         };
 
+
         game.move = function(entity) {
-            if(!entity._to) {
-                entity._to = 'x';
+            var eY = Math.floor(entity.y / game.spriteSheet.size);
+            var eX = Math.floor(entity.x / game.spriteSheet.size);
+            var tY = Math.floor(entity.moveTo.y / game.spriteSheet.size);
+            var tX = Math.floor(entity.moveTo.x / game.spriteSheet.size);
+
+            var map = {};
+            for(var i in game.graph) {
+                map[i] = game.graph[i];
             }
-            if(entity._to == 'x' && entity.x != entity.moveTo.x) {
-                if(entity.x > entity.moveTo.x) {
-                    entity.x -= 2;
-                } else {
-                    entity.x += 2;
-                }
-                if(entity.x % game.spriteSheet.size == 0) {
-                    entity._to = 'y';
-                }
-                return;
-            } else {
-                entity._to = 'y';
+
+            var g = {},c=eY+'x'+eX,n = (eY -1)+'x'+eX, s=(eY+1)+'x'+eX,w=eY+'x'+(eX-1),e=eY+'x'+(eX+1);
+            if(map[n]) {
+                g[n]=1;
+                map[n][c]=1;
             }
-            if(entity._to == 'y' && entity.y != entity.moveTo.y) {
-                if(entity.y > entity.moveTo.y) {
-                    entity.y -= 2;
-                } else {
-                    entity.y += 2;
-                }
-                if(entity.y % game.spriteSheet.size == 0) {
-                    entity._to = 'x';
-                }
-                return;
-            } else {
-                entity._to = 'x';
+            if(map[s]) {
+                g[s]=1;
+                map[s][c]=1;
             }
-            if(entity.y == entity.moveTo.y && entity.x == entity.moveTo.x) {
+            if(map[e]) {
+                g[e]=1;
+                map[e][c]=1;
+            }
+            if(map[w]) {
+                g[w] =1;
+                map[w][c] =1;
+            }
+            map[c] = g;
+
+            var graph = new Graph(map);
+            var path = graph.findShortestPath(eY+'x'+eX,tY+'x'+tX);
+            if(entity.x == entity.moveTo.x && entity.y == entity.moveTo.y) {
                 delete entity.moveTo;
+                return;
             }
-        }
+            var next = [entity.x,entity.y];
+            if(path[1]) {
+                next = path[1].split('x').map(function(i){return i * game.spriteSheet.size});
+            } else {
+                next = path[0].split('x').map(function(i){return i * game.spriteSheet.size});
+            }
+            var nextTile = game.getEntityAt(next[0],next[1]);
+            if(nextTile.type != "floor" && nextTile.name != entity.name) {
+                if(!path[1]) {
+                    delete entity.moveTo;
+                    return;
+                } else {
+                    next = path[0].split('x').map(function(i){return i * game.spriteSheet.size});
+                }
+            }
+            if(!entity._to) entity._to = 'y';
+            if(entity._to == 'y') {
+                if(next[0] > entity.y) entity.y += 2;
+                else if(next[0] < entity.y) entity.y -= 2;
+                else entity._to = 'x';
+            } else {
+                if(next[1] > entity.x) entity.x += 2;
+                else if(next[1] < entity.x) entity.x -= 2;
+                else entity._to = 'y';
+            }
+        };
 
         game.update = function() {
             if(!game.ready) game.ready = (game.spriteSheet != null);
             if(game.updating || !game.active || !game.ready) return;
             game.updating = true;
+            game.graph = {};
             var entities = game.entities.slice();
+            for(var i in entities) {
+                var yy = Math.floor( entities[i].y / game.spriteSheet.size );
+                var xx = Math.floor( entities[i].x / game.spriteSheet.size );
+                if(entities[i].type != 'floor' && entities[i].type != 'hero' && entities[i].type != 'monster') {
+                    if(game.graph[yy+'x'+xx]) {
+                        delete game.graph[yy+'x'+xx];
+                    }
+                    continue;
+                }
+                game.graph[yy+'x'+xx] = {};
+            }
+            for(var i in entities) {
+                if(entities[i].type != 'floor' && entities[i].type != 'hero' && entities[i].type != 'monster') {
+                    continue;
+                }
+                var yy = entities[i].y / game.spriteSheet.size;
+                var xx = entities[i].x / game.spriteSheet.size;
+                if(game.graph[(yy + 1)+'x'+xx]) { // reverse north
+                    game.graph[(yy + 1)+'x'+xx][yy+'x'+xx] = 1;
+                }
+                if(game.graph[(yy - 1)+'x'+xx]) { // reverse south
+                    game.graph[(yy - 1)+'x'+xx][yy+'x'+xx] = 1;
+                }
+                if(game.graph[yy+'x'+(xx -1)]) { // reverse east
+                    game.graph[yy+'x'+(xx -1)][yy+'x'+xx] = 1;
+                }
+                if(game.graph[yy+'x'+(xx +1)]) { // reverse west
+                    game.graph[yy+'x'+(xx +1)][yy+'x'+xx] = 1;
+                }
+            }
+            for(var i in entities) {
+                if(entities[i].type == 'floor' || entities[i].type == 'hero' || entities[i].type == 'monster') {
+                    continue;
+                }
+                var yy = entities[i].y / game.spriteSheet.size;
+                var xx = entities[i].x / game.spriteSheet.size;
+                for(var ii in game.graph) {
+                    if(game.graph[ii][yy+'x'+xx]) {
+                        delete game.graph[ii][yy+'x'+xx];
+                    }
+                }
+            }
             for(var i=0;i<entities.length;i++) {
                 if(entities[i].moveTo) {
                     game.move(entities[i]);

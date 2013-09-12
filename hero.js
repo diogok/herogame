@@ -108,21 +108,14 @@ var HeroGame = (function(){
                 monster.update = null;
                 monster.afterDraw = null;
                 monster.sprite = monster.dead;
-            }else if(HeroGame.game.near(hero,monster,HeroGame.sprite.size)) {
-                HeroGame.attack(monster,hero);
+                setTimeout(function(){
+                    HeroGame.game.removeEntity(monster);
+                },1000);
             } else {
-                monster.moveTo = {};
-                if(hero.x > monster.x) {
-                    monster.moveTo.x = hero.x - HeroGame.sprite.size;
-                } else {
-                    monster.moveTo.x = hero.x + HeroGame.sprite.size;
+                if(HeroGame.game.near(hero,monster,HeroGame.sprite.size)) {
+                    HeroGame.attack(monster,hero);
                 }
-                if(hero.y > monster.y) {
-                    monster.moveTo.y = hero.y - HeroGame.sprite.size;
-                } else {
-                    monster.moveTo.y = hero.y + HeroGame.sprite.size;
-                }
-
+                monster.moveTo = {x:hero.x,y:hero.y};
             }
         };
 
