@@ -20,6 +20,7 @@ var HeroGame = (function(){
             canvas.rect(theChar.x * HeroGame.game.scale + HeroGame.game.diffX,(theChar.y - 2) * HeroGame.game.scale + HeroGame.game.diffY,w,5);
             canvas.fillStyle = 'green';
             canvas.fill();
+            canvas.lineWidth = 1 ;
             canvas.strokeStyle = 'black';
             canvas.stroke();
         };
@@ -175,15 +176,49 @@ var HeroGame = (function(){
             }
         };
 
+        HeroGame.intro = function() {
+            var newGame = {
+                'name':'new-game',
+                'draw':function(canvas,e,g) {
+                    var w=400,h=50,x=canvas.width/2 - 200;
+                    canvas.beginPath();
+                    canvas.rect(x,50,w,h);
+                    canvas.fillStyle = 'grey';
+                    canvas.fill();
+                    canvas.strokeStyle = 'black';
+                    canvas.lineWidth = 3 ;
+                    canvas.stroke();
+                    canvas.fillStyle = "green";
+                    canvas.font = "bold 24px sans-serif";
+                    canvas.fillText("New Game", x + 130, 85 );
+                },
+                'update': function(events,e,g) {
+                    if(events.click) {
+                        var x = events.click.evt.layerX, y = events.click.evt.layerY;
+                        if(   x > (g.canvas.width/2) - 200
+                           && x < (g.canvas.width/2) - 200 + 400
+                           && y > 50
+                           && y < 100) {
+                           g.removeEntity(e);
+                            HeroGame.switchMap(HeroGame.quest.start);
+                            var intro = HeroGame.quest.intro.reverse();
+                            for(var i in intro) {
+                                HeroGame.game.message(intro[i],5000 * intro.length);
+                            }
+                       }
+                    }
+                }
+            };
+            HeroGame.game.addEntity(newGame);
+        };
+
         HeroGame.run = function(game) {
             HeroGame.game = game;
+            HeroGame.intro();
+            /*
             setTimeout(function(){
-                HeroGame.switchMap(HeroGame.quest.start);
-                var intro = HeroGame.quest.intro.reverse();
-                for(var i in intro) {
-                    game.message(intro[i],5000 * intro.length);
-                }
             },500);
+            */
         };
 
         return HeroGame;

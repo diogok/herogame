@@ -187,6 +187,7 @@ Game = (function(){
                     canvas.rect(x,y,w,h);
                     canvas.fillStyle = 'rgba(0,0,0,0.8)';
                     canvas.fill();
+                    canvas.lineWidth = 1 ;
                     canvas.strokeStyle = 'black';
                     canvas.stroke();
                     canvas.fillStyle = "green";
@@ -345,8 +346,14 @@ Game = (function(){
 
         game.bindEvents = function() {
             game.canvasEl.addEventListener('click',function(evt) {
-                var y = Math.floor(( evt.layerY - game.diffY) / ( game.spriteSheet.size * game.scale )) ;
-                var x = Math.floor(( evt.layerX - game.diffX) / ( game.spriteSheet.size * game.scale )) ;
+                var y,x;
+                if(game.spriteSheet) {
+                    y = Math.floor(( evt.layerY - game.diffY) / ( game.spriteSheet.size * game.scale )) ;
+                    x = Math.floor(( evt.layerX - game.diffX) / ( game.spriteSheet.size * game.scale )) ;
+                } else {
+                    y = evt.layerY;
+                    x = evt.layerX;
+                }
                 try {
                     var entities = game.entities.slice();
                     var tileCfg = null;
