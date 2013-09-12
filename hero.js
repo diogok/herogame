@@ -76,6 +76,31 @@ var HeroGame = (function(){
                        if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
                            HeroGame.game.message(events.click.tile.message);
                        }
+                   } else if(events.click.tile.type == 'save') {
+                       if(HeroGame.game.near(hero,{x:events.click.x * HeroGame.sprite.size,y:events.click.y * HeroGame.sprite.size},HeroGame.sprite.size)) {
+                           var save = {
+                               hero: hero,
+                               quest: HeroGame.quest,
+                               map: {map: HeroGame.map.name ,x:hero.x / HeroGame.sprite.size ,y:hero.y / HeroGame.sprite.size}
+                           };
+                           window.localStorage.setItem('save',JSON.stringify(save));
+                           HeroGame.game.message("Game saved!");
+                       }
+                   } else if(events.click.tile.type == 'exit') {
+                        var got = false;
+                        for(var i in hero.items) {
+                            if(hero.items[i].name == events.click.tile.item) {
+                                got=true;
+                            }
+                        }
+                        if(!got) { 
+                            HeroGame.game.message("Hey, go get that "+ events.click.tile.item +"!");
+                        } else {
+                            var end = HeroGame.quest.ending.reverse();
+                            for(var i in end) {
+                                HeroGame.game.message(end[i],10000);
+                            }
+                        }
                    }
                 }
             }
@@ -87,7 +112,7 @@ var HeroGame = (function(){
 
         HeroGame.gameOver = function() {
             HeroGame.game.message("You lost, pal!");
-            setTimeout(HeroGame.game.stop,250);
+            setTimeout(HeroGame.intro,2000);
         };
 
         HeroGame.attack = function(p1,p2) {
@@ -131,12 +156,16 @@ var HeroGame = (function(){
 
         HeroGame.monsterUpdate = function(events,monster,game) {
             if(monster.life <= 0) {
+                delete monster.moveTo;
                 monster.update = null;
                 monster.afterDraw = null;
                 monster.sprite = monster.dead;
+                monster.type = 'floor';
+                /*
                 setTimeout(function(){
                     HeroGame.game.removeEntity(monster);
                 },1000);
+                */
             } else {
                 if(HeroGame.game.near(hero,monster,HeroGame.sprite.size)) {
                     HeroGame.attack(monster,hero);
@@ -151,8 +180,7 @@ var HeroGame = (function(){
             var item = chest.item;
             item.autoDraw = true;
             item.x = HeroGame.sprite.size * -1;
-            item.y = HeroGame.sprite.size;
-            console.log(item.x);
+            item.y = HeroGame.sprite.size * (hero.items.length + 1);
             hero.items.push(item);
             HeroGame.game.addEntity(item);
         };
@@ -176,13 +204,13 @@ var HeroGame = (function(){
             }
         };
 
-        HeroGame.intro = function() {
-            var newGame = {
+        HeroGame.addButton = function(msg,i,fun) {
+            var button = {
                 'name':'new-game',
                 'draw':function(canvas,e,g) {
                     var w=400,h=50,x=canvas.width/2 - 200;
                     canvas.beginPath();
-                    canvas.rect(x,50,w,h);
+                    canvas.rect(x,50 * i ,w,h);
                     canvas.fillStyle = 'grey';
                     canvas.fill();
                     canvas.strokeStyle = 'black';
@@ -190,35 +218,72 @@ var HeroGame = (function(){
                     canvas.stroke();
                     canvas.fillStyle = "green";
                     canvas.font = "bold 24px sans-serif";
-                    canvas.fillText("New Game", x + 130, 85 );
+                    canvas.fillText(msg, x + 130, 50 * i + 35);
                 },
                 'update': function(events,e,g) {
                     if(events.click) {
                         var x = events.click.evt.layerX, y = events.click.evt.layerY;
                         if(   x > (g.canvas.width/2) - 200
                            && x < (g.canvas.width/2) - 200 + 400
-                           && y > 50
-                           && y < 100) {
-                           g.removeEntity(e);
-                            HeroGame.switchMap(HeroGame.quest.start);
-                            var intro = HeroGame.quest.intro.reverse();
-                            for(var i in intro) {
-                                HeroGame.game.message(intro[i],5000 * intro.length);
-                            }
+                           && y > 50 * i
+                           && y < 100 * i) {
+                           if(fun()){
+                            g.removeEntity(e);
+                           }
                        }
                     }
                 }
             };
-            HeroGame.game.addEntity(newGame);
+            HeroGame.game.addEntity(button);
+        };
+
+        HeroGame.intro = function() {
+            HeroGame.game.reset();
+
+            HeroGame.addButton('New Game',1,function(){
+                HeroGame.quest = quest;
+                HeroGame.switchMap(HeroGame.quest.start);
+                var intro = HeroGame.quest.intro.reverse();
+                for(var i in intro) {
+                    HeroGame.game.message(intro[i],5000 * intro.length);
+                }
+                return true;
+            });
+
+            HeroGame.addButton('Load Game',2,function(){
+                var save = window.localStorage.getItem('save');
+                if(save) {
+                    var save = JSON.parse(save);
+                    hero.life = save.hero.life;
+                    var c = 0;
+                    for(var i in save.hero.items) {
+                        var item = save.hero.items[i];
+                        item.autoDraw = true;
+                        item.x = HeroGame.sprite.size * -1;
+                        item.y = HeroGame.sprite.size * (c + 1);
+                        hero.items.push(item);
+                        c++;
+                    }
+                    HeroGame.quest = save.quest;
+                    HeroGame.switchMap(save.map);
+                    return true;
+                } else {
+                    HeroGame.game.message("Sorry, no saved game available.");
+                    return false;
+                }
+            });
+
+            setTimeout(function(){
+                HeroGame.game.message('Click to move.');
+                HeroGame.game.message('Click to interact.');
+                HeroGame.game.message('Click to attack.');
+                HeroGame.game.message('Click to survive.');
+            },500);
         };
 
         HeroGame.run = function(game) {
             HeroGame.game = game;
             HeroGame.intro();
-            /*
-            setTimeout(function(){
-            },500);
-            */
         };
 
         return HeroGame;

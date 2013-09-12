@@ -13,6 +13,7 @@ var quest = {
     },
     "maps": {
         "entrance": {
+            "name":"entrance",
             "sprite": {
                 "config": {
                     "1": {
@@ -30,7 +31,8 @@ var quest = {
                 {
                     "name":"entrance-door",
                     "autoDraw": true,
-                    "type":"door",
+                    "type":"exit",
+                    "item":"amulet",
                     "x": 0 * 16,
                     "y": 1 * 16,
                     "sprite": {
@@ -53,6 +55,7 @@ var quest = {
             ]
         },
         "hall": {
+            "name":"hall",
             "sprite": {
                 "config": {
                     "1": {
@@ -126,6 +129,7 @@ var quest = {
             ]
         },
         "goblin-room-1":{
+            "name":"goblin-room-1",
             "sprite": {
                 "config": {
                     "1": {
@@ -216,6 +220,7 @@ var quest = {
             ]
         },
         "bad-room": {
+            "name":"bad-room",
             "sprite": {
                 "config": {
                     "1": {
@@ -321,6 +326,7 @@ var quest = {
             ]
         },
         "key-room":{
+            "name":"key-room",
             "sprite": {
                 "config": {
                     "1": {
@@ -397,6 +403,7 @@ var quest = {
             ]
         },
         "corridor": {
+            "name":"corridor",
             "sprite": {
                 "config": {
                     "1": {
