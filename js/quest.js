@@ -7,6 +7,7 @@ var quest = {
     "ending": [ "Congratulations, boy!",
                 "How 'luck' we are to have yet another hero now..." ,
                 "Hooray!", "Hooray!", "Hooray!"],
+    "badEnding": ["Sorry boy, you are dead!"],
     "start": {
         "map": "entrance",
         "x": 1,
