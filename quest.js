@@ -424,10 +424,6 @@ var quest = {
                 [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
-                [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
-                [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
-                [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
-                [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,2],[1,2],[1,2],[1,2],[1,2] ],
             ],
             "entities": [
@@ -446,7 +442,7 @@ var quest = {
                 {
                     "name":"somebooks0",
                     "type":"message",
-                    "message":"",
+                    "message":"It is known that this dungeon was not Gathor's original.",
                     "sprite": {
                         "y":4,
                         "x":8
@@ -458,61 +454,37 @@ var quest = {
                 {
                     "name":"somebooks1",
                     "type":"message",
-                    "message":"",
+                    "message":"This was build by some crazy boy, an 'analyst', for whatever that means...",
                     "sprite": {
                         "y":4,
                         "x":8
                     },
-                    "y": 8 * 16,
+                    "y": 6 * 16,
                     "x": 1 * 16,
                     "autoDraw": true
                 },
                 {
                     "name":"somebooks2",
                     "type":"message",
-                    "message":"",
+                    "message":"The boy talked some code.",
                     "sprite": {
                         "y":4,
                         "x":8
                     },
-                    "y": 12 * 16,
+                    "y": 8 * 16,
                     "x": 1 * 16,
                     "autoDraw": true
                 },
                 {
                     "name":"somebooks3",
                     "type":"message",
-                    "message":"",
+                    "message":"If you follow his 'coded' direction, you may be able to pass.",
                     "sprite": {
                         "y":4,
                         "x":8
                     },
-                    "y": 4 * 16,
-                    "x": 4 * 16,
-                    "autoDraw": true
-                },
-                {
-                    "name":"somebooks4",
-                    "type":"message",
-                    "message":"",
-                    "sprite": {
-                        "y":4,
-                        "x":8
-                    },
-                    "y": 8 * 16,
-                    "x": 4 * 16,
-                    "autoDraw": true
-                },
-                {
-                    "name":"somebooks5",
-                    "type":"message",
-                    "message":"",
-                    "sprite": {
-                        "y":4,
-                        "x":8
-                    },
-                    "y": 12 * 16,
-                    "x": 4 * 16,
+                    "y": 10 * 16,
+                    "x": 1 * 16,
                     "autoDraw": true
                 },
                 {
@@ -524,7 +496,7 @@ var quest = {
                         "x":2
                     },
                     "autoDraw": true,
-                    "y": 14 * 16,
+                    "y": 10 * 16,
                     "x": 5 * 16
                 }
             ]
@@ -569,7 +541,7 @@ var quest = {
                     "autoDraw":true,
                     "y": 14 * 16,
                     "x": 0  * 16,
-                    "goTo":{"map":"corridor","x":4,"y":14}
+                    "goTo":{"map":"corridor","x":4,"y":10}
                 },
                 {
                     "name":"the-sign",
