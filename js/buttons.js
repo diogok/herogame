@@ -19,7 +19,7 @@
                 canvas.stroke();
                 canvas.fillStyle = "green";
                 canvas.font = "bold 24px sans-serif";
-                canvas.fillText(text, x + 130,y + 35);
+                canvas.fillText(text, x + 25,y + 35);
             },
             'update': function(events,e,g) {
                 if(events.click) {
@@ -28,8 +28,6 @@
                        && x < (g.canvas.width/2) - 200 + 400
                        && y > 65  * e.i
                        && y < 50 + (65 * e.i )) {
-                       console.log(e.name);
-                       return
                        if(fun()){
                            g.removeEntity(e);
                        }
@@ -40,3 +38,4 @@
         game.addEntity(button);
     }
 })(Game);
+

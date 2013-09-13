@@ -55,6 +55,11 @@ var HeroGame = (function(){
             }
         });
 
+        game.utils.addButton('About & Credits',function() {
+            window.open('README.html','README','toolbar=no,width=640,height=480');
+            return false;
+        });
+
         game.utils.showMessage('Click to move.');
         game.utils.showMessage('Click to interact.');
         game.utils.showMessage('Click to attack.');
