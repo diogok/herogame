@@ -10,7 +10,7 @@ Awesome tileset from [Jerom](http://opengameart.org/users/jerom) [16x16 fantasy 
 
 Dijkstra code using [Andrew Hayward](https://github.com/andrewhayward/dijkstra) library.
 
-[Try it out!](http://diogok.net/hero)
+Checkout the [game](http://js13kgames.com/entries/herogame/) at js13kgames, or [Try it out!](http://diogok.net/hero).
 
 ![Your Hero Game](https://raw.github.com/diogok/herogame/master/assets/screenshot400x250.png "Your Hero Game")
 
