@@ -87,6 +87,19 @@
     var heroUpdate = function(events,hero,game) {
         if(hero.life <=0 ) return game.gameOver();
         if(hero.life > hero.maxLife) hero.life = hero.maxLife;
+        if(events.keydown) {
+            to = {x:hero.x,y:hero.y};
+            if(events.keydown[39] || events.keydown[68]) { // right
+                to.x += game.sprites.size;
+            } else if(events.keydown[37] || events.keydown[65]) { // left
+                to.x -= game.sprites.size;
+            } else if(events.keydown[38] || events.keydown[87]) { // up
+                to.y -= game.sprites.size;
+            } else if(events.keydown[40] || events.keydown[83]) { //down
+                to.y += game.sprites.size;
+            }
+            hero.moveTo = to;
+        }
         if(events.click && events.click.tile) {
             var size = game.sprites.size;
             var tile = events.click.tile;
