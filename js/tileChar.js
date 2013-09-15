@@ -189,6 +189,7 @@
             monster.afterDraw = null;
             monster.sprite = monster.dead;
             monster.type = 'floor';
+            monster.walkable= true;
         } else {
             var hero = game.getEntity('hero');
             if(game.utils.nearTile(hero,monster)) {
