@@ -519,7 +519,7 @@ var quest = {
                 [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
-                [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
+                [ [1,2],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
                 [ [1,2],[1,9],[1,9],[1,8],[1,8],[1,8],[1,8],[1,8],[1,8],[1,9],[1,9],[1,2] ],
@@ -533,6 +533,44 @@ var quest = {
             ],
             "entities": [
                 {
+                    "name":"minotaur-pit",
+                    "type":"monster",
+                    "life":10,
+                    "maxLife":10,
+                    "attack": 4,
+                    "defense":3,
+                    "sprite": {
+                        "x":3,
+                        "y":3
+                    },
+                    "dead": {
+                        "x": 5,
+                        "y": 5
+                    },
+                    "x": 9 * 16,
+                    "y": 1 * 16,
+                    "autoDraw":true
+                },
+                {
+                    "name":"goblin-pit",
+                    "type":"monster",
+                    "life":5,
+                    "maxLife":5,
+                    "attack": 2,
+                    "defense":1,
+                    "sprite": {
+                        "x":1,
+                        "y":3
+                    },
+                    "dead": {
+                        "x":5,
+                        "y":5
+                    },
+                    "x": 1 * 16,
+                    "y": 9 * 16,
+                    "autoDraw":true
+                },
+                {
                     "name":"corridor-door",
                     "type":"door",
                     "sprite": {
@@ -543,98 +581,6 @@ var quest = {
                     "y": 14 * 16,
                     "x": 0  * 16,
                     "goTo":{"map":"corridor","x":4,"y":10}
-                },
-                {
-                    "name":"the-sign",
-                    "type":"message",
-                    "message":"DDRRDDRRDDRR",
-                    "autoDraw":true,
-                    "x": 2 * 16,
-                    "y": 1 * 16,
-                    "sprite": {
-                        "x":8,
-                        "y":4
-                    }
-                },
-                {
-                    "name":"p1",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":3 * 16,
-                    "y":4 * 16
-                },
-                {
-                    "name":"p2",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":4 * 16,
-                    "y":4 * 16
-                },
-                {
-                    "name":"p3",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":4 * 16,
-                    "y":5 * 16
-                },
-                {
-                    "name":"p4",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":4 * 16,
-                    "y":6 * 16
-                },
-                {
-                    "name":"p5",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":5 * 16,
-                    "y":6 * 16
-                },
-                {
-                    "name":"p6",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":6 * 16,
-                    "y":6 * 16
-                },
-                {
-                    "name":"p7",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":6 * 16,
-                    "y":7 * 16
-                },
-                {
-                    "name":"p8",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":6 * 16,
-                    "y":8 * 16
-                },
-                {
-                    "name":"p8",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":7 * 16,
-                    "y":8 * 16
-                },
-                {
-                    "name":"p10",
-                    "type":"fake-floor",
-                    "autoDraw":true,
-                    "sprite": {"x":1,"y":8},
-                    "x":8 * 16,
-                    "y":8 * 16
                 },
                 {
                     "name":'stair-down',
@@ -859,44 +805,6 @@ var quest = {
                     "autoDraw":true,
                     "x":7 * 16,
                     "y":1 * 16
-                },
-                {
-                    "name":"minotaur-2",
-                    "type":"monster",
-                    "life":10,
-                    "maxLife":10,
-                    "attack": 4,
-                    "defense":3,
-                    "sprite": {
-                        "x":3,
-                        "y":3
-                    },
-                    "dead": {
-                        "x": 5,
-                        "y": 5
-                    },
-                    "x": 5 * 16,
-                    "y": 5 * 16,
-                    "autoDraw":true
-                },
-                {
-                    "name":"goblin-2",
-                    "type":"monster",
-                    "life":5,
-                    "maxLife":5,
-                    "attack": 2,
-                    "defense":1,
-                    "sprite": {
-                        "x":1,
-                        "y":3
-                    },
-                    "dead": {
-                        "x":5,
-                        "y":5
-                    },
-                    "x": 3 * 16,
-                    "y": 2 * 16,
-                    "autoDraw":true
                 },
                 {
                     "name":"boss",
