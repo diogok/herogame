@@ -68,7 +68,7 @@ var HeroGame = (function(){
 
 
     HeroGame.start = function() {
-        Game.afterRun.push(function(){
+        Game.on('afterRun',function(cfg){
             HeroGame.intro(Game);
         });
         Game.run(config);

@@ -126,7 +126,7 @@
                     tile.item.autoDraw = true;
                     tile.item.x = game.sprites.size * -1;
                     tile.item.y = game.sprites.size * (hero.items.length + 1);
-                    hero.items.push(tile.item);
+                    hero.on('items',tile.item);
                     game.addEntity(tile.item);
                 }
             }
@@ -199,13 +199,13 @@
         }
     };
 
-    game.beforeAddEntity.push(function(entity){
+    game.on('beforeAddEntity',function(entity){
         if(entity.type == 'monster') {
-            entity.beforeUpdate.push(monsterUpdate);
+            entity.on('beforeUpdate',monsterUpdate);
             entity.isChar = true;
         }
         if(entity.type == 'hero') {
-            entity.beforeUpdate.push(heroUpdate);
+            entity.on('beforeUpdate',heroUpdate);
             entity.isChar = true;
             var c = 0
             for(var i in entity.items) {
@@ -218,7 +218,7 @@
             }
         }
         if(entity.isChar && entity.life > 0) {
-            entity.afterDraw.push(lifeBar);
+            entity.on('afterDraw',lifeBar);
         }
     });
 

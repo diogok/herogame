@@ -67,7 +67,7 @@
         image.src = file;
     };
 
-    game.beforeAddEntity.push(function(entity){
+    game.on('beforeAddEntity',function(entity){
         if(entity.autoDraw) {
             entity.draw = function(canvas,entity,game) {
                 var sprite = game.sprites;
@@ -86,7 +86,7 @@
         }
     });
 
-    game.onClick.push(function(event) {
+    game.on('onClick',function(event) {
         var y,x;
         if(game.sprites) {
             y = Math.floor((event.evt.layerY - game.config.diffY) / (game.sprites.size * game.config.scale)) ;
@@ -106,7 +106,7 @@
         }
     });
 
-    game.beforeRun.push(function(config) {
+    game.on('beforeRun',function(config) {
         if(config.scale) {
             game.config.scale = config.scale;
         }

@@ -39,7 +39,7 @@
         }
         for(var i=0;i<bkp.length;i++) {
             if(!bkp[i].name.match(/^-map-/)) {
-                game.entities.push(bkp[i]);
+                game.on('entities',bkp[i]);
             }
         }
     };

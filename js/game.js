@@ -7,23 +7,12 @@ Game = (function(){
         drawRequest: null,
         events: {},
         entities: [],
-        beforeUpdate: [],
-        afterUpdate: [],
-        beforeDraw: [],
-        afterDraw: [],
-        beforeAddEntity: [],
-        afterAddEntity: [],
-        beforeRemoveEntity: [],
-        afterRemoveEntity: [],
-        onClick: [],
-        onKeyDown: [],
-        onKeyUp: [],
-        onKeyPress: [],
         beforeRun: [],
         afterRun:[],
         utils: {},
         plugins: {},
-        config: {}
+        config: {},
+        listeners: {}
     };
 
     game.winGame = function() {
@@ -32,24 +21,34 @@ Game = (function(){
     game.gameOver = function() {
     };
 
+    game.on = function(evt,fun){
+        if(!fun) return game.listeners[evt] || [];
+        if(!game.listeners[evt]) game.listeners[evt] = [fun]; 
+        else game.listeners[evt].push(fun);
+    };
+
+    game.over = function(evt,args) {
+        for(var i in game.on(evt)) game.on(evt)[i].apply(game,args);
+    };
+
     game.addEntity = function(entity) {
-        entity.beforeDraw = [];
-        entity.afterDraw = [];
-        entity.beforeUpdate = [];
-        entity.afterUpdate = [];
-        for(var i in game.beforeAddEntity) {
-            game.beforeAddEntity[i](entity);
-        }
+        entity.listeners = {}
+        entity.on = function(evt,fun) {
+            if(!fun) return entity.listeners[evt] || [];
+            if(!entity.listeners[evt]) entity.listeners[evt] = [fun]; 
+            else entity.listeners[evt].push(fun);
+        };
+        entity.over = function(evt,args) {
+            for(var i in entity.on(evt)) entity.on(evt)[i].apply(entity,args);
+        };
+
+        game.over('beforeAddEntity',[entity]);
         game.entities.push(entity);
-        for(var i in game.afterAddEntity) {
-            game.afterAddEntity[i](entity);
-        }
+        game.over('afterAddEntity',[entity]);
     };
 
     game.removeEntity = function(entity) {
-        for(var i in game.beforeRemoveEntity) {
-            game.beforeRemoveEntity[i](entity);
-        }
+        game.over('beforeRemoveEntity',[entity]);
         var entities = game.entities.slice();
         var max = entities.length;
         for(var i =0;i<max;i++) {
@@ -58,9 +57,7 @@ Game = (function(){
             }
         }
         game.entities = entities.filter(function(e) { return typeof e != 'undefined'}) ;
-        for(var i in game.afterRemoveEntity) {
-            game.afterRemoveEntity[i](entity);
-        }
+        game.over('afterRemoveEntity',[entity]);
     };
 
     game.getEntity = function(name) {
@@ -75,24 +72,16 @@ Game = (function(){
 
     game.draw = function() {
         game.canvas.clearRect(0,0,game.canvas.width,game.canvas.height);
-        for(var i in game.beforeDraw) {
-            game.beforeDraw[i](game.canvas);
-        }
+        game.over('beforeDraw',[game.canvas]);
         var entities = game.entities.slice();
         for(var i=0;i<entities.length;i++) {
-            for(var ii in entities[i].beforeDraw){
-                entities[i].beforeDraw[ii](game.canvas,entities[i],game);
-            }
+            entities[i].over('beforeDraw',[game.canvas,entities[i],game]);
             if(entities[i].draw) {
                 entities[i].draw(game.canvas,entities[i],game);
             }
-            for(var ii in entities[i].afterDraw){
-                entities[i].afterDraw[ii](game.canvas,entities[i],game);
-            }
+            entities[i].over('afterDraw',[game.canvas,entities[i],game]);
         }
-        for(var i in game.afterDraw) {
-            game.afterDraw[i](game.canvas);
-        }
+        game.over('afterDraw',[game.canvas]);
         game.drawRequest = requestAnimationFrame(function(){
             game.draw()
         });
@@ -100,63 +89,45 @@ Game = (function(){
 
 
     game.update = function() {
-        for(var i in game.beforeUpdate) {
-            game.beforeUpdate[i](game.events);
-        }
+        game.over('beforeUpdate',[game.events]);
         var entities = game.entities.slice();
         for(var i=0;i<entities.length;i++) {
-            for(var ii in entities[i].beforeUpdate){
-                entities[i].beforeUpdate[ii](game.events,entities[i],game);
-            }
+            entities[i].over('beforeUpdate',[game.events,entities[i],game]);
             if(!entities[i]) continue;
             if(entities[i].update){
                 entities[i].update(game.events,entities[i],game);
             }
             if(!entities[i]) continue;
-            for(var ii in entities[i].afterUpdate){
-                entities[i].afterUpdate[ii](game.events,entities[i],game);
-            }
+            entities[i].over('afterUpdate',[game.events,entities[i],game]);
         }
-        for(var i in game.afterUpdate) {
-            game.afterUpdate[i](game.events);
-        }
+        game.over('afterUpdate',[game.events]);
         game.events = {};
     };
 
     game.bindEvents = function() {
         game.canvasEl.addEventListener('click',function(evt) {
             game.events.click = {evt: evt};
-            for(var i in game.onClick) {
-                game.onClick[i](game.events.click);
-            }
+            game.over('onClick',[game.events.click]);
         },false);
         window.addEventListener('keydown',function(evt) {
             game.events.keydown = {evt:evt};
-            for(var i in game.onKeyDown) {
-                game.onKeyDown[i](game.events.keydown);
-            }
             game.events.keydown[evt.keyCode] = true;
+            game.over('onKeyDown',[game.events.keydown]);
         });
         window.addEventListener('keypress',function(evt) {
             game.events.keypress = {evt:evt};
-            for(var i in game.onKeyPress) {
-                game.onKeyPress[i](game.events.keypress);
-            }
             game.events.keypress[evt.charCode] = true;
+            game.over('onKeyPress',[game.events.keypress]);
         });
         window.addEventListener('keyup',function(evt) {
             game.events.keyup = {};
-            for(var i in game.onKeyUp) {
-                game.onKeyUp[i](game.events.keyup);
-            }
             game.events.keyup[evt.keyCode] = true;
+            game.over('onKeyUp',[game.events.keyup]);
         });
     };
 
     game.run = function(config) {
-        for(var i in game.beforeRun) {
-            game.beforeRun[i](config);
-        }
+        game.over('beforeRun',[config]);
         game.canvasEl = document.getElementById(config.id);
         game.canvas   = game.canvasEl.getContext('2d');
         game.canvas.width = config.width;
@@ -176,9 +147,7 @@ Game = (function(){
         });
         game.bindEvents();
         game.config = config;
-        for(var i in game.afterRun) {
-            game.afterRun[i](config);
-        }
+        game.over('afterRun',[config]);
     };
 
     return game;

@@ -16,7 +16,7 @@
         },time);
     };
 
-    game.afterDraw.push(function(canvas) {
+    game.on('afterDraw',function(canvas) {
         for(var i=0;i<game.messages.length && i < 5;i++) {
             var w = canvas.width - 20 ;
             var h = 22;

@@ -3,7 +3,7 @@
 
     game.graph = {};
 
-    game.beforeUpdate.push(function(events){
+    game.on('beforeUpdate',function(events){
         var entities = game.entities;
 
         for(var i in entities) { // nodes
@@ -47,9 +47,9 @@
         }
     });
 
-    game.beforeAddEntity.push(function(entity) {
+    game.on('beforeAddEntity',function(entity) {
         if(entity.isChar) {
-            entity.afterUpdate.push(function(events,entity,game){
+            entity.on('afterUpdate',function(events,entity,game){
                 if(!entity.moveTo) return;
                 var eY = game.utils.getTileY(entity);
                 var eX = game.utils.getTileX(entity);
