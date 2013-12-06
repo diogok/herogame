@@ -6,10 +6,9 @@ all:
 	cat target/js/buttons.js >> target/all.js
 	cat target/js/messages.js >> target/all.js
 	cat target/js/tile.js >> target/all.js
-	cat target/js/tileMap.js >> target/all.js
-	cat target/js/tileChar.js >> target/all.js
-	cat target/js/graph.js >> target/all.js
-	cat target/js/tileAutoMove.js >> target/all.js
+	cat target/js/tile.map.js >> target/all.js
+	cat target/js/tile.char.js >> target/all.js
+	cat target/js/tile.automove.js >> target/all.js
 	cat target/js/quest.js >> target/all.js
 	cat target/js/hero.js >> target/all.js
 	cp index.min.html target/index.html
