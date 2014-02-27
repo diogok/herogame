@@ -71,7 +71,9 @@ Game = (function(){
     };
 
     game.draw = function() {
-        game.canvas.clearRect(0,0,game.canvas.width,game.canvas.height);
+        if(game.canvas.clearRect) {
+            game.canvas.clearRect(0,0,game.canvas.width,game.canvas.height);
+        }
         game.over('beforeDraw',[game.canvas]);
         var entities = game.entities.slice();
         for(var i=0;i<entities.length;i++) {
@@ -152,4 +154,61 @@ Game = (function(){
 
     return game;
 })();
+
+// Loader below
+
+var _defined = {}, _src = "";
+
+var scripts = document.getElementsByTagName("script");
+for(var i in scripts) {
+    if(typeof scripts[i] == "object") {
+        var src = scripts[i].getAttribute("src"), rel = scripts[i].getAttribute("rel");
+        if(rel != null && src == rel + "game.js") {
+            if(rel.lastIndexOf("/") != rel.length - 1) {
+                rel += "/";
+            }
+            _src = rel;
+        }
+    }
+}
+
+function require(modules,fn) {
+    if(typeof modules == "string") modules = [modules];
+    console.log(JSON.stringify( modules ));
+    var loaded = function(wah) {
+        console.log("loaded "+wah);
+        console.log(JSON.stringify(_defined));
+        if(modules.length == 1) {
+            fn(_defined);
+        } else {
+            require(modules.slice(1),fn);
+        }
+    }
+    var curr = modules[0];
+    if(typeof _defined[modules[0]] == "undefined") {
+        var script = document.createElement("script");
+        script.setAttribute("src",_src+curr+".js");
+        script.onload = function() { loaded(curr) ;};
+        document.body.appendChild(script);
+    } else {
+        loaded(curr);
+    }
+};
+
+function define() {
+    var args = arguments;
+    if(arguments.length == 2) {
+        _defined[args[0]] = args[1]();
+    } else if(args.length ==3) {
+        require(args[0],function(modules) {
+            _defined[args[1]] = args[2](modules);
+        });
+    } else {
+        throw new Exception("Bad define call!");
+    }
+};
+
+define("game",function(){
+    return Game;
+});
 
