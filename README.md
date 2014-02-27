@@ -14,3 +14,13 @@ Checkout the [game](http://js13kgames.com/entries/herogame/) at js13kgames, or [
 
 ![Your Hero Game](https://raw.github.com/diogok/herogame/master/assets/screenshot400x250.png "Your Hero Game")
 
+Here I learned: 
+
+- Tiles!
+- Level changing
+- Paths for monsters
+- "Buttons"
+- Basic Entity/Component System
+- Basic Plugins/Events System
+- Spritesheets
+
